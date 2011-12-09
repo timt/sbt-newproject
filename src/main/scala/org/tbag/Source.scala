@@ -57,7 +57,7 @@ class Source(baseDir: File, org: String) {
   private val helloWorldContent =
     """|package %s
     |
-    |object HelloWorldApp extends App {
+    |class HelloWorld {
     |  def greeting:String = {
     |    return "Hello World"
     |  }

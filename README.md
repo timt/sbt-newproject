@@ -1,4 +1,4 @@
-**sbt-newproject is a plugin for simple-build-tool that create simple project outlines for sbt projects
+**sbt-newproject** is a plugin for simple-build-tool that create simple project outlines for sbt projects
 
 Requirements
 ------------

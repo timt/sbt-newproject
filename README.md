@@ -1,5 +1,19 @@
 **sbt-newproject** is a plugin for simple-build-tool that create simple project outlines for sbt projects
 
+Generates a simple build.sbt file and creates the project structure:
+
+    src/
+      main/
+        resources/
+           <files to include in main jar here>
+        scala/
+           <main Scala sources>
+      test/
+        resources
+           <files to include in test jar here>
+        scala/
+           <test Scala sources>
+
 Requirements
 ------------
 

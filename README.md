@@ -27,7 +27,7 @@ Installation
 
 Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
-    resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
+    resolvers += "sbt-newproject-repo" at "http://timt.github.com/maven/releases/"
 
     addSbtPlugin("org.tbag" % "sbt-newproject" % "0.1")
 

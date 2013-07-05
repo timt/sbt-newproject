@@ -17,19 +17,19 @@ Generates a simple build.sbt file and creates the project structure:
 Requirements
 ------------
 
-* [sbt](https://github.com/harrah/xsbt/wiki) 0.11.2
+* [sbt](https://github.com/harrah/xsbt/wiki) 0.12.3
 
 
 Installation
 ------------
 
-**sbt 0.11.2:**
+**sbt 0.12.3:**
 
 Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
-    resolvers += "sbt-newproject-repo" at "http://timt.github.com/maven/releases/"
+    resolvers += "sbt-newproject-repo" at "http://timt.github.com/repo/releases/"
 
-    addSbtPlugin("org.tbag" % "sbt-newproject" % "0.1")
+    addSbtPlugin("org.tbag" % "sbt-newproject" % "0.2")
 
 Usage
 -----

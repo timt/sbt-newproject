@@ -47,16 +47,16 @@ class BuildSbtFile(baseDir: File, currentRef: ProjectRef, scope: Settings[Scope]
   }
 
   val libraryDependencies = otherLibDependencies ++ Seq(
-    """"org.specs2" %% "specs2" % "1.6.1"""",
+    """"org.specs2" %% "specs2" % "1.14"""",
     """"org.specs2" %% "specs2-scalaz-core" % "6.0.1" % "test""""
   )
 
   val libDependenciesBuildSbtString =
     """
-    |
-    |libraryDependencies ++= Seq(
+      |
+      |libraryDependencies ++= Seq(
     %s
-    |)""".format((libraryDependencies map ("|    " + _)).mkString(",\n")).stripMargin
+      |)""".format((libraryDependencies map ("|    " + _)).mkString(",\n")).stripMargin
 }
 
 object BuildSbtFile {
@@ -66,8 +66,9 @@ object BuildSbtFile {
 
   def webBuildSbtFile(sbtStuff: SbtStuff) = {
     val unfilteredLibs = Seq(
-      """"net.databinder" %% "unfiltered-filter" % "0.4.1" % "compile" withSources()""",
-      """"net.databinder" %% "unfiltered-jetty" % "0.4.1" % "compile" withSources()"""
+      """"net.databinder" %% "unfiltered-filter" % "0.6.8" % "compile" withSources()""",
+      """"net.databinder" %% "unfiltered-jetty" % "0.6.8" % "compile" withSources()""",
+      """"org.eclipse.jetty.orbit" % "javax.servlet" % "2.5.0.v201103041518" % "compile" withSources()"""
     )
     new BuildSbtFile(sbtStuff.baseDir, sbtStuff.projectRef, sbtStuff.scopeSettings, unfilteredLibs)
   }

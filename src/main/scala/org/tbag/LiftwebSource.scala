@@ -12,17 +12,11 @@ class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
     writeFile(srcWebappDir("WEB-INF"), "web.xml", webXml)
   }
 
-  private def srcDir(rootDirName: String, leafDirName: String) = {
-    "src/%s/%s/%s".format(rootDirName, leafDirName, org.replace(".", "/"))
-  }
+  private def srcDir(rootDirName: String, leafDirName: String) = s"src/$rootDirName/$leafDirName/${org.replace(".", "/")}"
 
-  private def srcMainScalaDir(leafDirName: String) = {
-    "src/main/scala/%s".format(leafDirName)
-  }
+  private def srcMainScalaDir(leafDirName: String) = s"src/main/scala/$leafDirName"
 
-  private def srcWebappDir(leafDirName: String) = {
-    "src/main/webapp/%s".format(leafDirName)
-  }
+  private def srcWebappDir(leafDirName: String) = s"src/main/webapp/$leafDirName"
 
   private def writeFile(srcDir: String, filename: String, content: String) {
     IO.write(new File(srcDir, filename), content)

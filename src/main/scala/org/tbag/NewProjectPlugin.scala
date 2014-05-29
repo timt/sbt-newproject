@@ -7,7 +7,6 @@ import SbtStuff._
 import collection.Seq
 
 object NewProjectPlugin extends Plugin {
-
   override lazy val settings = Seq(
     commands ++= Seq(genSimpleProjectCommand, genWebProjectCommand, genLiftwebProjectCommand)
   )
@@ -26,7 +25,6 @@ object NewProjectPlugin extends Plugin {
         println("Finnised creating project, now run test/run to verify, and start hacking on the project")
         state.reload
     }
-
 
   lazy val genWebProjectCommand =
     Command.command("gen-web-project") {
@@ -52,12 +50,3 @@ object NewProjectPlugin extends Plugin {
         state.reload
     }
 }
-
-
-
-
-
-
-
-
-

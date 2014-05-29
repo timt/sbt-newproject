@@ -47,6 +47,13 @@ Create an unfiltered web project
     sbt test
     sbt run
 
+Create an liftweb project
+
+    sbt gen-lift-project
+    ...
+    sbt test
+    sbt run
+
 License
 -------
 

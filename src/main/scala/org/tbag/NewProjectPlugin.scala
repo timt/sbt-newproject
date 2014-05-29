@@ -9,7 +9,7 @@ import collection.Seq
 object NewProjectPlugin extends Plugin {
 
   override lazy val settings = Seq(
-    commands ++= Seq(genSimpleProjectCommand, genWebProjectCommand)
+    commands ++= Seq(genSimpleProjectCommand, genWebProjectCommand, genLiftwebProjectCommand)
   )
 
   lazy val genSimpleProjectCommand =
@@ -40,6 +40,17 @@ object NewProjectPlugin extends Plugin {
         state.reload
     }
 
+  lazy val genLiftwebProjectCommand =
+    Command.command("gen-lift-project") {
+      (state: State) =>
+        val newBuildSettings = liftwebBuildSbtFile(state)
+          .write(name, organization, version, scalaVersion)
+        val source: LiftwebSource = new LiftwebSource(SbtStuff(state).baseDir, newBuildSettings.get(organization).getOrElse("default"))
+        source.createSrcDirs()
+        source.createSourceFiles()
+        println("Created simple liftweb app, now type run to start it, and start hacking on the project")
+        state.reload
+    }
 }
 
 

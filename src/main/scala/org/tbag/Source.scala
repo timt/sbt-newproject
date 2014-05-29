@@ -1,7 +1,6 @@
 package org.tbag
 
 import sbt._
-import Keys._
 import collection.Seq
 import java.lang.String
 import java.io.File
@@ -13,27 +12,27 @@ class Source(baseDir: File, org: String) {
     println("Generated src folders")
   }
 
-  def createSimpleSampleCode {
-    createHelloWorldSource
-    createHelloWorldSpec
+  def createSimpleSampleCode() {
+    createHelloWorldSource()
+    createHelloWorldSpec()
   }
 
-  def createWebSampleCode {
-    createHelloWorldWebSource
+  def createWebSampleCode() {
+    createHelloWorldWebSource()
     //    createHelloWorldSpec
   }
 
-  private def createHelloWorldSource {
+  private def createHelloWorldSource() {
     IO.write(new File(srcDir("main", "scala"), "HelloWorld.scala"), helloWorldContent)
     println("Generated sample HelloWorld class")
   }
 
-  private def createHelloWorldSpec {
+  private def createHelloWorldSpec() {
     IO.write(new File(srcDir("test", "scala"), "HelloWorldSpec.scala"), helloWorldSpecContent)
     println("Generated sample HelloWorld spec")
   }
 
-  def createHelloWorldWebSource {
+  def createHelloWorldWebSource() {
     IO.write(new File(srcDir("main", "scala"), "HelloWorldWebApp.scala"), helloWorldWebAppContent)
     println("Generated sample HelloWorld webapp")
   }
@@ -82,18 +81,17 @@ class Source(baseDir: File, org: String) {
 
   private val helloWorldSpecContent =
     """|package %s
-    |
-    |import org.specs2.mutable.Specification
-    |
-    |class HelloWorldSpec extends Specification {
-    |
-    |  "HelloWorld" should {
-    |    "return 'Hello World'" in {
-    |      new HelloWorld().greeting must be equalTo "Hello World"
-    |    }
-    |  }
-    |}
-  """.stripMargin.format(org)
+      |
+      |import org.scalatest.Spec
+      |import org.scalatest.Matchers._
+      |
+      |class HelloWorldSpec extends Spec {
+      |
+      |  def `HelloWorld should return 'Hello World'` {
+      |      new HelloWorld().greeting should be ("Hello World")
+      |  }
+      |}
+    """.stripMargin.format(org)
 }
 
 

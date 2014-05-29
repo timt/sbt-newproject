@@ -7,13 +7,13 @@ import java.io.File
 class BuildSbtFile(baseDir: File, currentRef: ProjectRef, scope: Settings[Scope], otherLibDependencies: Seq[String] = Seq()) {
 
   def write(settingKeys: SettingKey[String]*) = {
-    assertDoesNotExist
-    val newBuildSettings = settingKeys map {
+    assertDoesNotExist()
+    val newBuildSettings = (settingKeys map {
       (settingKey: SettingKey[String]) => (settingKey, getNewValueFromUserFor(settingKey))
-    } toMap
+    }).toMap
     val content = (settingKeys map {
       (settingKey: SettingKey[String]) => """%s := "%s"""".format(settingName(settingKey), newBuildSettings.get(settingKey).getOrElse(""))
-    } mkString ("\n\n")) + libDependenciesBuildSbtString
+    } mkString "\n\n") + libDependenciesBuildSbtString
     IO.write(new File(baseDir, "build.sbt"), content)
     println("Generated build file")
     newBuildSettings
@@ -26,7 +26,7 @@ class BuildSbtFile(baseDir: File, currentRef: ProjectRef, scope: Settings[Scope]
     }
   }
 
-  private def assertDoesNotExist {
+  private def assertDoesNotExist() {
     val buildSbtFile: File = new File(baseDir, "build.sbt")
     if (buildSbtFile.exists()) sys.error(
       "\nbuild.sbt file already exists for this project at path %s" format buildSbtFile.getParent
@@ -47,8 +47,7 @@ class BuildSbtFile(baseDir: File, currentRef: ProjectRef, scope: Settings[Scope]
   }
 
   val libraryDependencies = otherLibDependencies ++ Seq(
-    """"org.specs2" %% "specs2" % "1.14"""",
-    """"org.specs2" %% "specs2-scalaz-core" % "6.0.1" % "test""""
+    """"org.scalatest" %% "scalatest" % "2.1.6" % "test""""
   )
 
   val libDependenciesBuildSbtString =
@@ -66,13 +65,14 @@ object BuildSbtFile {
 
   def webBuildSbtFile(sbtStuff: SbtStuff) = {
     val unfilteredLibs = Seq(
-      """"net.databinder" %% "unfiltered-filter" % "0.6.8" % "compile" withSources()""",
-      """"net.databinder" %% "unfiltered-jetty" % "0.6.8" % "compile" withSources()""",
-      """"org.eclipse.jetty.orbit" % "javax.servlet" % "2.5.0.v201103041518" % "compile" withSources()"""
+      """"net.databinder" %% "unfiltered-filter" % "0.7.1" % "compile"""",
+      """"net.databinder" %% "unfiltered-jetty" % "0.7.1" % "compile"""",
+      """"org.eclipse.jetty.orbit" % "javax.servlet" % "2.5.0.v201103041518" % "compile""""
     )
     new BuildSbtFile(sbtStuff.baseDir, sbtStuff.projectRef, sbtStuff.scopeSettings, unfilteredLibs)
   }
 }
+
 
 
 

@@ -17,29 +17,35 @@ Generates a simple build.sbt file and creates the project structure:
 Requirements
 ------------
 
-* [sbt](https://github.com/harrah/xsbt/wiki) 0.12.3
+* [sbt](https://github.com/harrah/xsbt/wiki) 0.13.2
 
 
 Installation
 ------------
 
-**sbt 0.12.3:**
+**sbt 0.13.2:**
 
 Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
     resolvers += "sbt-newproject-repo" at "http://timt.github.com/repo/releases/"
 
-    addSbtPlugin("org.tbag" % "sbt-newproject" % "0.2")
+    addSbtPlugin("org.tbag" % "sbt-newproject" % "0.3")
 
 Usage
 -----
 Create a simple project
 
-`gen-simple-project` sbt task to create simple project files.
+    sbt gen-simple-project
+    ...
+    sbt test
+    sbt run
 
 Create an unfiltered web project
 
-`gen-web-project` sbt task to create unfiltered web project files.
+    sbt gen-web-project
+    ...
+    sbt test
+    sbt run
 
 License
 -------

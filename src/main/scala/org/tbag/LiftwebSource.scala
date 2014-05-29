@@ -10,6 +10,7 @@ class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
     writeFile(srcDir("main", "scala"), "WebServer.scala", jettyWebServer)
     writeFile(srcDir("main", "scala"), "WebServerApp.scala", webServerApp)
     writeFile(srcWebappDir("WEB-INF"), "web.xml", webXml)
+    writeFile(srcWebappDir(""), "index.html", indexHtml)
   }
 
   private def srcDir(rootDirName: String, leafDirName: String) = s"src/$rootDirName/$leafDirName/${org.replace(".", "/")}"
@@ -31,6 +32,7 @@ class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
     |class Boot extends Loggable {
     |  def boot() {
     |    System.setProperty("run.mode", "production")
+    |    println("### Lift has booted.")
     |  }
     |}""".stripMargin.format(org)
 
@@ -124,4 +126,16 @@ class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
     |        <url-pattern>/*</url-pattern>
     |    </filter-mapping>
     |</web-app>""".stripMargin
+
+  private val indexHtml =
+  """<!DOCTYPE html>
+    |<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    |<head>
+    |    <meta charset="UTF-8"/>
+    |    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    |</head>
+    |<body>
+    |    <h1>It works!</h1>
+    |</body>
+    |</html>""".stripMargin
 }

@@ -22,7 +22,7 @@ object NewProjectPlugin extends Plugin {
         val source: Source = new Source(SbtStuff(state).baseDir, newBuildSettings.get(organization).getOrElse("default"))
         source.createSrcDirs()
         source.createSimpleSampleCode()
-        println("Finnised creating project, now run test/run to verify, and start hacking on the project")
+        println("Finished creating project, now run test/run to verify, and start hacking on the project")
         state.reload
     }
 

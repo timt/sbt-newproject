@@ -6,6 +6,9 @@ import java.io.File
 
 class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
   def createSourceFiles() {
+    writeFile(srcMainResourcesDir("props"), "default.props", defaultProps)
+    writeFile(srcMainResourcesDir(""), "logback.xml", logback)
+
     writeFile(srcMainScalaDir("bootstrap/liftweb"), "Boot.scala", liftBootContent)
     writeFile(srcDir("main", "scala"), "WebServer.scala", jettyWebServer)
     writeFile(srcDir("main", "scala"), "WebServerApp.scala", webServerApp)
@@ -17,12 +20,39 @@ class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
 
   private def srcMainScalaDir(leafDirName: String) = s"src/main/scala/$leafDirName"
 
+  private def srcMainResourcesDir(leafDirName: String) = s"src/main/resources/$leafDirName"
+
   private def srcWebappDir(leafDirName: String) = s"src/main/webapp/$leafDirName"
 
   private def writeFile(srcDir: String, filename: String, content: String) {
     IO.write(new File(srcDir, filename), content)
     println(s"Generated file => $srcDir/$filename")
   }
+
+  private val defaultProps = """""".stripMargin
+
+  private val logback =
+    """<configuration>
+      |    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      |        <file>logs/app.log</file>
+      |        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      |            <!--daily-->
+      |            <fileNamePattern>app.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+      |            <maxHistory>90</maxHistory>
+      |        </rollingPolicy>
+      |        <encoder>
+      |            <pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
+      |        </encoder>
+      |    </appender>
+      |
+      |    <logger name="org.eclipse.jetty" level="INFO"/>
+      |
+      |    <logger name="bootstrap.liftweb" level="INFO"/>
+      |
+      |    <root level="warn">
+      |        <appender-ref ref="FILE"/>
+      |    </root>
+      |</configuration>""".stripMargin
 
   private val liftBootContent =
     """|package bootstrap.liftweb

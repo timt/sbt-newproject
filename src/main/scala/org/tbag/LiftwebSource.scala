@@ -28,10 +28,13 @@ class LiftwebSource(baseDir: File, org: String) extends Source(baseDir, org) {
     """|package bootstrap.liftweb
     |
     |import net.liftweb.common.Loggable
+    |import net.liftweb.http.LiftRules
     |
     |class Boot extends Loggable {
     |  def boot() {
+    |    LiftRules.addToPackages("%s")
     |    System.setProperty("run.mode", "production")
+    |
     |    println("### Lift has booted.")
     |  }
     |}""".stripMargin.format(org)

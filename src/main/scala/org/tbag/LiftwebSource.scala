@@ -11,6 +11,7 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
     WriteFile(srcMainScalaDir("bootstrap/liftweb"), "Boot.scala", liftBootContent)
     WriteFile(srcDir("main", "scala"), "WebServer.scala", jettyWebServer)
     WriteFile(srcDir("main", "scala"), "WebServerApp.scala", webServerApp)
+    WriteFile(srcDir("main", "scala"), "RestService.scala", restService)
     WriteFile(srcWebappDir("WEB-INF"), "web.xml", webXml)
     WriteFile(srcWebappDir(""), "index.html", indexHtml)
 
@@ -53,18 +54,21 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
 
   private val liftBootContent =
     """|package bootstrap.liftweb
-    |
-    |import net.liftweb.common.Loggable
-    |import net.liftweb.http.LiftRules
-    |
-    |class Boot extends Loggable {
-    |  def boot() {
-    |    LiftRules.addToPackages("%s")
-    |    System.setProperty("run.mode", "production")
-    |
-    |    println("### Lift has booted.")
-    |  }
-    |}""".stripMargin.format(org)
+      |
+      |import net.liftweb.common.Loggable
+      |import net.liftweb.http.LiftRules
+      |import default.RestService
+      |
+      |class Boot extends Loggable {
+      |  def boot() {
+      |    LiftRules.addToPackages("%s")
+      |    System.setProperty("run.mode", "production")
+      |
+      |    LiftRules.statelessDispatch.append(RestService)
+      |
+      |    println("### Lift has booted.")
+      |  }
+      |}""".stripMargin.format(org)
 
   private val jettyWebServer =
     """package %s
@@ -242,4 +246,19 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |
       |  lazy val myProject = Project("%s", file(".")).settings(myBuildSettings: _*)
       |}""".stripMargin.format(name, name)
+
+  val restService =
+    """package default
+      |
+      |import net.liftweb.http.rest.RestHelper
+      |import net.liftweb.common.Loggable
+      |import net.liftweb.http.InMemoryResponse
+      |import scala.collection.immutable.::
+      |
+      |
+      |object RestService extends RestHelper with Loggable {
+      |  serve {
+      |    case r @ "hello" :: _ Get _ ⇒ InMemoryResponse("Hello to you too!".getBytes, Nil, Nil, 200)
+      |  }
+      |}""".stripMargin
 }

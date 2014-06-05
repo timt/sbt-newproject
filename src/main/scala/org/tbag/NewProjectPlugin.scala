@@ -41,9 +41,8 @@ object NewProjectPlugin extends Plugin {
   lazy val genLiftwebProjectCommand =
     Command.command("gen-lift-project") {
       (state: State) =>
-        val newBuildSettings = liftwebBuildSbtFile(state)
-          .write(name, organization, version, scalaVersion)
-        val source: LiftwebSource = new LiftwebSource(SbtStuff(state).baseDir, newBuildSettings.get(organization).getOrElse("default"))
+        val newBuildSettings = liftwebBuildSbtFile(state).write(name, organization, version, scalaVersion)
+        val source: LiftwebSource = new LiftwebSource(SbtStuff(state).baseDir, newBuildSettings.get(name).getOrElse("my-project"), newBuildSettings.get(organization).getOrElse("default"))
         source.createSrcDirs()
         source.createSourceFiles()
         println("Created simple liftweb app, now type run to start it, and start hacking on the project")

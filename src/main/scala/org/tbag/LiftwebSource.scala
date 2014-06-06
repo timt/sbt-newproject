@@ -9,19 +9,24 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
     WriteFile(srcMainResourcesDir(""), "logback.xml", logback)
 
     WriteFile(srcMainScalaDir("bootstrap/liftweb"), "Boot.scala", liftBootContent)
-    WriteFile(srcDir("main", "scala"), "WebServer.scala", jettyWebServer)
-    WriteFile(srcDir("main", "scala"), "WebServerApp.scala", webServerApp)
-    WriteFile(srcDir("main", "scala"), "RestService.scala", restService)
+    WriteFile(srcRootDir, "WebServer.scala", jettyWebServer)
+    WriteFile(srcRootDir, "WebServerApp.scala", webServerApp)
+    WriteFile(srcRootDir, "RestService.scala", restService)
+    WriteFile(srcSubpackageDir("ui"), "HomePageView.scala", homePageView)
+    WriteFile(srcSubpackageDir("ui"), "ExampleCometActor.scala", exampleCometActor)
+
     WriteFile(srcWebappDir("WEB-INF"), "web.xml", webXml)
-    WriteFile(srcWebappDir(""), "index.html", indexHtml)
+    WriteFile(srcWebappDir("templates-hidden"), "template.html", template)
 
     WriteFile("project", "SbtBuild.scala", sbtBuildFileContents(name))
     WriteFile("distribution", "run.sh", runScript)
   }
 
-  private def srcDir(rootDirName: String, leafDirName: String) = s"src/$rootDirName/$leafDirName/${org.replace(".", "/")}"
-
   private def srcMainScalaDir(leafDirName: String) = s"src/main/scala/$leafDirName"
+
+  private def srcSubpackageDir(subpackage: String) = s"src/main/scala/${org.replace(".", "/")}/$subpackage"
+
+  private def srcRootDir = s"src/main/scala/${org.replace(".", "/")}"
 
   private def srcMainResourcesDir(leafDirName: String) = s"src/main/resources/$leafDirName"
 
@@ -53,22 +58,33 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |</configuration>""".stripMargin
 
   private val liftBootContent =
-    """|package bootstrap.liftweb
+    """package bootstrap.liftweb
       |
-      |import net.liftweb.common.Loggable
+      |import net.liftweb.common.{Full, Loggable}
       |import net.liftweb.http.LiftRules
-      |import default.RestService
+      |import %s.RestService
+      |import %s.ui.HomePageView
       |
       |class Boot extends Loggable {
       |  def boot() {
-      |    LiftRules.addToPackages("%s")
+      |    LiftRules.addToPackages("%s.ui")
       |    System.setProperty("run.mode", "production")
       |
+      |    LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
+      |    LiftRules.useXhtmlMimeType = false
+      |    LiftRules.stripComments.default.set(() ⇒ false)
+      |
+      |    // Sample Rest Service
       |    LiftRules.statelessDispatch.append(RestService)
+      |
+      |    // Sample Comet UI
+      |    LiftRules.viewDispatch.append {
+      |      case List("index") ⇒ Left(() ⇒ Full(HomePageView()))
+      |    }
       |
       |    println("### Lift has booted.")
       |  }
-      |}""".stripMargin.format(org)
+      |}""".stripMargin.format(org, org, org)
 
   private val jettyWebServer =
     """package %s
@@ -161,18 +177,6 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |    </filter-mapping>
       |</web-app>""".stripMargin
 
-  private val indexHtml =
-    """<!DOCTYPE html>
-      |<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-      |<head>
-      |    <meta charset="UTF-8"/>
-      |    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      |</head>
-      |<body>
-      |    <h1>It works!</h1>
-      |</body>
-      |</html>""".stripMargin
-
   val runScript =
     """#!/bin/sh
       |
@@ -261,4 +265,73 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |    case r @ "hello" :: _ Get _ ⇒ InMemoryResponse("Hello to you too!".getBytes, Nil, Nil, 200)
       |  }
       |}""".stripMargin
+
+  val template =
+    """<!DOCTYPE html>
+      |<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:lift="http://liftweb.net" xmlns="http://www.w3.org/1999/html">
+      |<head>
+      |    <meta charset="UTF-8"/>
+      |    <title>My Project</title>
+      |</head>
+      |<body>
+      |    <div class="container">
+      |        <lift:bind name="content"/>
+      |    </div>
+      |</body>
+      |</html>""".stripMargin
+
+  val homePageView =
+    """package %s.ui
+      |
+      |
+      |object HomePageView {
+      |  def apply() = {
+      |    <div class="lift:surround?with=template;at=content">
+      |      <lift:comet type="ExampleCometActor"/>
+      |    </div>
+      |  }
+      |}""".stripMargin.format(org)
+
+  val exampleCometActor =
+    """package %s.ui
+      |
+      |import net.liftweb.http.CometActor
+      |import net.liftweb.common.Loggable
+      |import net.liftweb.http.js.JsCmd
+      |import net.liftweb.http.js.JsCmds.SetHtml
+      |
+      |trait Subscriber {
+      |  def !(msg: Any)
+      |}
+      |
+      |class ExampleCometActor extends CometActor with Subscriber with Loggable {
+      |  private val rootAgent = ExampleAgent(ExampleCometActor.this)
+      |
+      |  def render = rootAgent.render
+      |
+      |  override def lowPriority = {
+      |    case Initialise ⇒ partialUpdate(rootAgent.onInitialise())
+      |    case e ⇒ logger.error("unexpected message: " + e)
+      |  }
+      |
+      |  override protected def exceptionHandler = {
+      |    case e ⇒ logger.error("ExampleCometActor threw and exception", e)
+      |  }
+      |}
+      |
+      |case class ExampleAgent(subscriber: Subscriber) extends Loggable {
+      |  def render = {
+      |
+      |    subscriber ! Initialise
+      |
+      |    <div id="mycontent"/>
+      |  }
+      |
+      |  def onInitialise(): JsCmd = {
+      |    println("ExampleAgent.onInitialise() called.")
+      |    SetHtml("mycontent", <h3>I have been initialised! Yay!!</h3>)
+      |  }
+      |}
+      |
+      |case object Initialise""".stripMargin.format(org)
 }

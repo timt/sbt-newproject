@@ -13,7 +13,7 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
     WriteFile(srcRootDir, "WebServerApp.scala", webServerApp)
     WriteFile(srcRootDir, "RestService.scala", restService)
     WriteFile(srcSubpackageDir("ui"), "HomePageView.scala", homePageView)
-    WriteFile(srcSubpackageDir("ui"), "ExampleCometActor.scala", exampleCometActor)
+    WriteFile(srcSubpackageDir("ui/comet"), "ExampleCometActor.scala", exampleCometActor)
 
     WriteFile(srcWebappDir("WEB-INF"), "web.xml", webXml)
     WriteFile(srcWebappDir("templates-hidden"), "template.html", template)
@@ -294,7 +294,7 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |}""".stripMargin.format(org)
 
   val exampleCometActor =
-    """package %s.ui
+    """package %s.ui.comet
       |
       |import net.liftweb.http.CometActor
       |import net.liftweb.common.Loggable
@@ -329,7 +329,6 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |  }
       |
       |  def onInitialise(): JsCmd = {
-      |    println("ExampleAgent.onInitialise() called.")
       |    SetHtml("mycontent", <h3>I have been initialised! Yay!!</h3>)
       |  }
       |}

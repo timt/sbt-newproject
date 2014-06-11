@@ -4,7 +4,7 @@ organization := "org.tbag"
 
 name := "sbt-newproject"
 
-version := "0.3"
+version := "0.4-SNAPSHOT"
 
 scalaVersion := "2.10.4"
 

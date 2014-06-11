@@ -11,9 +11,11 @@ class BuildSbtFile(baseDir: File, currentRef: ProjectRef, scope: Settings[Scope]
     val newBuildSettings = (settingKeys map {
       (settingKey: SettingKey[String]) => (settingKey, getNewValueFromUserFor(settingKey))
     }).toMap
+
     val content = (settingKeys map {
       (settingKey: SettingKey[String]) => """%s := "%s"""".format(settingName(settingKey), newBuildSettings.get(settingKey).getOrElse(""))
     } mkString "\n\n") + libDependenciesBuildSbtString
+
     IO.write(new File(baseDir, "build.sbt"), content)
     println("Generated build file")
     newBuildSettings
@@ -70,6 +72,14 @@ object BuildSbtFile {
       """"org.eclipse.jetty.orbit" % "javax.servlet" % "2.5.0.v201103041518" % "compile""""
     )
     new BuildSbtFile(sbtStuff.baseDir, sbtStuff.projectRef, sbtStuff.scopeSettings, unfilteredLibs)
+  }
+
+  def liftwebBuildSbtFile(sbtStuff: SbtStuff) = {
+    val liftAndJettyLibs = Seq(
+      """"net.liftweb" %% "lift-webkit" % "2.5" % "compile"""",
+      """"org.eclipse.jetty" % "jetty-webapp" % "8.1.15.v20140411" % "compile""""
+    )
+    new BuildSbtFile(sbtStuff.baseDir, sbtStuff.projectRef, sbtStuff.scopeSettings, liftAndJettyLibs)
   }
 }
 

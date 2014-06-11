@@ -23,17 +23,17 @@ class Source(baseDir: File, org: String) {
   }
 
   private def createHelloWorldSource() {
-    IO.write(new File(srcDir("main", "scala"), "HelloWorld.scala"), helloWorldContent)
+    IO.write(new File(srcDirWithOrgPackage("main", "scala"), "HelloWorld.scala"), helloWorldContent)
     println("Generated sample HelloWorld class")
   }
 
   private def createHelloWorldSpec() {
-    IO.write(new File(srcDir("test", "scala"), "HelloWorldSpec.scala"), helloWorldSpecContent)
+    IO.write(new File(srcDirWithOrgPackage("test", "scala"), "HelloWorldSpec.scala"), helloWorldSpecContent)
     println("Generated sample HelloWorld spec")
   }
 
   def createHelloWorldWebSource() {
-    IO.write(new File(srcDir("main", "scala"), "HelloWorldWebApp.scala"), helloWorldWebAppContent)
+    IO.write(new File(srcDirWithOrgPackage("main", "scala"), "HelloWorldWebApp.scala"), helloWorldWebAppContent)
     println("Generated sample HelloWorld webapp")
   }
 
@@ -41,17 +41,15 @@ class Source(baseDir: File, org: String) {
   private def srcDirs(): Seq[File] =
     dirs("main") ++ dirs("test")
 
-  private def dirs(rootDirName: String) = {
-    Seq("scala", "resources") map {
-      leafDirName =>
-        new File(baseDir, srcDir(rootDirName, leafDirName))
-    }
-  }
+  private def dirs(rootDirName: String): Seq[File] =
+    new File(baseDir, srcDirWithOrgPackage(rootDirName, "scala")) :: new File(baseDir, srcDir(rootDirName, "resources")) :: Nil
 
 
-  private def srcDir(rootDirName: String, leafDirName: String) = {
-    "src/%s/%s/%s".format(rootDirName, leafDirName, org.replace(".", "/"))
-  }
+  private def srcDir(rootDirName: String, leafDirName: String) =
+    s"src/$rootDirName/$leafDirName"
+
+  private def srcDirWithOrgPackage(rootDirName: String, leafDirName: String) =
+    s"${srcDir(rootDirName, leafDirName)}/${org.replace(".", "/")}"
 
   private val helloWorldContent =
     """|package %s

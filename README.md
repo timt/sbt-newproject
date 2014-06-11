@@ -29,7 +29,7 @@ Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugi
 
     resolvers += "sbt-newproject-repo" at "http://timt.github.com/repo/releases/"
 
-    addSbtPlugin("org.tbag" % "sbt-newproject" % "0.3")
+    addSbtPlugin("org.tbag" % "sbt-newproject" % "0.4")
 
 Usage
 -----

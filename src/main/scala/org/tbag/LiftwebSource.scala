@@ -272,6 +272,7 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |<head>
       |    <meta charset="UTF-8"/>
       |    <title>My Project</title>
+      |    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       |</head>
       |<body>
       |    <div class="container">

@@ -182,13 +182,38 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |
       |APP_HOME=`dirname $0`
       |COMMAND=$1
+      |CLASSPATH=lib/*
+      |APP_NAME="MyApp"
+      |PIDFILE=${APP_HOME}/${APP_NAME}.pid
       |
       |function start() {
-      |    echo "TODO Implement start!"
+      |    if [ -f ${PIDFILE} ]; then
+      |        echo "$APP_NAME already running: $PIDFILE"
+      |        exit 1
+      |    fi
+      |
+      |    java -cp "${CLASSPATH}" default.WebServerApp &
+      |
+      |    pid=$!
+      |
+      |    echo ${pid} > ${PIDFILE}
+      |
+      |    echo "WebApp has started with pid: $pid..."
       |}
       |
       |function stop() {
-      |    echo "TODO Implement stop!"
+      |    if [ -f ${PIDFILE} ]; then
+      |        pid=`cat ${PIDFILE}`
+      |
+      |        if kill -INT ${pid} > /dev/null 2>&1; then
+      |            echo "$APP_NAME has been STOPPED."
+      |            rm ${PIDFILE}
+      |        else
+      |            echo "$APP_NAME stop FAILED! It is still running."
+      |        fi
+      |    else
+      |        echo "$APP_NAME doesn't appear to be running."
+      |    fi
       |}
       |
       |function restart() {
@@ -196,7 +221,17 @@ class LiftwebSource(baseDir: File, name: String, org: String) extends Source(bas
       |}
       |
       |function status() {
-      |    echo "TODO Implement status!"
+      |    if [ -f ${PIDFILE} ]; then
+      |        pid=`cat ${PIDFILE}`
+      |
+      |        if kill -0 ${pid} > /dev/null 2>&1; then
+      |            echo "$APP_NAME is running OK."
+      |            exit 0
+      |        fi
+      |    fi
+      |
+      |    echo "$APP_NAME is not running."
+      |    exit 1
       |}
       |
       |case "${COMMAND}" in
